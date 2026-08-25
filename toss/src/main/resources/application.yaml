@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: toss
+
+  # 우리는 이름+전화번호로 직접 인증하고 PasswordEncoder/AuthenticationManager를 안 쓰므로,
+  # Spring Boot가 자동으로 만드는 임시 인메모리 사용자(매 시작마다 랜덤 비밀번호 로그 출력)를 끈다.
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+
+  datasource:
+    url: jdbc:h2:mem:toss;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # toss-collector/distribution-server와 동일한 로컬 Redis를 세션 저장소로도 사용한다.
+  session:
+    store-type: redis
+
+# 프론트엔드(별도 오리진) 개발 서버 주소. 배포 시 실제 도메인으로 교체.
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000
+  # 최초 관리자 계정(AdminSeeder가 ADMIN이 하나도 없을 때 자동 생성). 반드시 실제 값으로 교체할 것.
+  admin:
+    name: ${ADMIN_NAME:관리자}
+    phone-number: ${ADMIN_PHONE_NUMBER:01000000000}
